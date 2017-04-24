@@ -11,14 +11,20 @@ class JobsController < ApplicationController
   end
 
   def index
-    @jobs = case params[:order]
-            when 'by_lower_bound'
-              Job.published.order('wage_lower_bound DESC')
-            when 'by_upper_bound'
-              Job.published.order('wage_upper_bound DESC')
-            else
-              Job.published.recent
-            end
+    if params[:city].blank?
+      @jobs = Job.published.recent
+    else
+      @city_id = City.find_by(name: params[:city]).id
+      @jobs = Job.where(:city_id => @city_id).order('wage_lower_bound DESC')
+    end
+    # @jobs = case params[:order]
+    #         when 'by_lower_bound'
+    #           Job.published.order('wage_lower_bound DESC')
+    #         when 'by_upper_bound'
+    #           Job.published.order('wage_upper_bound DESC')
+    #         else
+    #           Job.published.recent
+    #         end
   end
 
   def new

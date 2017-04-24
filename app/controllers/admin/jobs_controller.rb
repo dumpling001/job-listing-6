@@ -13,11 +13,12 @@ class Admin::JobsController < ApplicationController
 
   def new
     @job = Job.new
+    @cities = City.all.map { |c| [c.name, c.id] }
   end
 
   def create
     @job = Job.new(job_params)
-
+    @job.city_id = params[:city_id]
     if @job.save
       redirect_to admin_jobs_path
     else
@@ -27,10 +28,12 @@ class Admin::JobsController < ApplicationController
 
   def edit
     @job = Job.find(params[:id])
+    @cities = City.all.map { |c| [c.name, c.id] }
   end
 
   def update
     @job = Job.find(params[:id])
+
     if @job.update(job_params)
       redirect_to admin_jobs_path
     else
@@ -62,6 +65,6 @@ class Admin::JobsController < ApplicationController
   private
 
   def job_params
-    params.require(:job).permit(:title, :description, :wage_upper_bound, :wage_lower_bound, :contact_email, :is_hidden)
+    params.require(:job).permit(:title, :description, :wage_upper_bound, :wage_lower_bound, :contact_email, :is_hidden, :city_id)
   end
 end
